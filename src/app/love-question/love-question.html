@@ -1,0 +1,14 @@
+<div #container class="love-qa-shell">
+  <div #card class="love-card">
+    
+    <!-- dynamic question -->
+    <h3 class="question">{{ questions[currentQuestionIndex] }}</h3>
+
+    <div class="buttons">
+      <button #yesBtn class="btn yes" (click)="onYesClick()">Yes 💕</button>
+      <button class="btn no" (click)="onNoClick()">No 😅</button>
+    </div>
+
+    <p class="hint">(Tap your answer — the hearts will fly if you say yes!)</p>
+  </div>
+</div>

@@ -1,0 +1,152 @@
+:root {
+  --accent: #ff5c9a;
+  --accent-2: #ff9ecd;
+  --bg: #fff6f9;
+  --card-bg: rgba(255, 240, 245, 0.95);
+  --text: #5c3444;
+}
+
+.love-qa-shell {
+  position: relative;
+  width: min(96%, 720px);
+  margin: 20px auto;
+  padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
+  min-height: 220px;
+  box-sizing: border-box;
+  /* make sure hearts can overflow and be visible */
+  overflow: visible;
+}
+
+/* Card */
+.love-card {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, var(--card-bg), #fff7fb);
+  border-radius: 20px;
+  padding: clamp(18px, 3.5vw, 28px);
+  box-shadow: 0 12px 36px rgba(255, 100, 150, 0.16);
+  text-align: center;
+  position: relative;
+  overflow: visible;
+  transform: translateZ(0);
+}
+
+/* shake animation for No */
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-8px) rotate(-2deg); }
+  40%  { transform: translateX(8px) rotate(2deg); }
+  60%  { transform: translateX(-6px) rotate(-1deg); }
+  80%  { transform: translateX(6px) rotate(1deg); }
+  100% { transform: translateX(0); }
+}
+.love-card.shake {
+  animation: shake 0.6s ease;
+}
+
+/* question */
+.question {
+  font-family: "Dancing Script", cursive;
+  color: var(--accent);
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
+  margin: 4px 0 12px;
+}
+
+/* buttons */
+.buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  min-width: 110px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  min-height: 44px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  touch-action: manipulation;
+}
+
+.btn:active { transform: translateY(1px); }
+
+/* yes specific */
+.btn.yes {
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color: black;
+}
+
+/* small pop when clicked */
+.btn.pop {
+  transform: scale(1.06);
+  box-shadow: 0 10px 30px rgba(255, 90, 140, 0.25);
+}
+
+/* no specific */
+.btn.no {
+  background: #fff;
+  color: var(--text);
+}
+
+/* hint */
+.hint {
+  color: #a66a80;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* floating hearts container uses the same parent; hearts are absolutely positioned */
+.floating-heart {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(0deg);
+  will-change: transform, opacity;
+  display: inline-block;
+  filter: drop-shadow(0 6px 10px rgba(255,90,140,0.12));
+  opacity: 0;
+  z-index: 30;
+}
+
+/* heart animation — rising up, drifting left/right, scaling and fading */
+@keyframes rise {
+  0% {
+    transform: translate(-50%, 0) scale(0.9) rotate(0deg);
+    opacity: 1;
+    filter: drop-shadow(0 6px 10px rgba(255,90,140,0.12));
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -380px) scale(1.2) rotate(240deg);
+    opacity: 0;
+  }
+}
+
+/* apply animation with random horizontal wiggle using animation-timing-function */
+.floating-heart {
+  animation-name: rise;
+  animation-timing-function: cubic-bezier(.2,.8,.2,1);
+  animation-fill-mode: forwards;
+}
+
+/* responsive tweaks */
+@media (max-width: 480px) {
+  .btn { min-width: 92px; padding: 10px 12px; }
+  .love-qa-shell { padding: 10px; }
+  @keyframes rise {
+    100% {
+      transform: translate(-50%, -260px) scale(1.1) rotate(200deg);
+      opacity: 0;
+    }
+  }
+}
