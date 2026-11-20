@@ -1,14 +1,90 @@
 <div #container class="love-qa-shell">
-  <div #card class="love-card">
-    
-    <!-- dynamic question -->
-    <h3 class="question">{{ questions[currentQuestionIndex] }}</h3>
+  <div class="orbit orbit-one">💗</div>
+  <div class="orbit orbit-two">✨</div>
 
-    <div class="buttons">
-      <button #yesBtn class="btn yes" (click)="onYesClick()">Yes 💕</button>
-      <button class="btn no" (click)="onNoClick()">No 😅</button>
-    </div>
+  <div #card class="love-card" [class.accepted]="accepted">
+    @if (!accepted) {
+      <div class="tiny-badge">A QUESTION FROM MY HEART</div>
+      <div class="question-mark">?</div>
+      <h3 class="question">{{ questions[currentQuestionIndex] }}</h3>
 
-    <p class="hint">(Tap your answer — the hearts will fly if you say yes!)</p>
+      <div class="buttons" [class.running]="noRunning">
+        <button #yesBtn class="btn yes" (click)="onYesClick()">
+          <span>Yes</span>
+          <span aria-hidden="true">💕</span>
+        </button>
+        <button
+          #noBtn
+          class="btn no"
+          [class.running]="noRunning"
+          (mouseenter)="onNoEscape()"
+          (touchstart)="onNoEscape()"
+          (click)="onNoClick()">
+          {{ noLabel }}
+        </button>
+      </div>
+
+      <p class="microcopy">
+        @if (noAttempts === 0) { Choose with all your heart... }
+        @if (noAttempts === 1) { Hmm... are you absolutely certain? }
+        @if (noAttempts === 2) { That answer looks suspicious 😌 }
+        @if (noAttempts >= 3) { I won't let you say no. Not this time! }
+      </p>
+    } @else {
+      <div class="celebration">
+        <div class="celebration-hearts" aria-hidden="true">💖 ✨ 💞</div>
+        <div class="tiny-badge">OFFICIAL HEART-TO-HEART RESULT</div>
+        <h3>Best answer ever.</h3>
+        <p>You just unlocked a lifetime supply of stupid jokes, warm hugs, and being ridiculously loved.</p>
+        <div class="love-seal">
+          <span>∞</span>
+          <small>US</small>
+        </div>
+        <p class="promise">And yes — I would choose you in every universe.</p>
+      </div>
+    }
   </div>
+
+  <section class="extra-surprises">
+    <button class="music-toggle" type="button" (click)="toggleMusic()">
+      <span class="music-icon" [class.playing]="musicPlaying">♫</span>
+      {{ musicPlaying ? 'Pause our song' : 'Play our little song' }}
+    </button>
+
+    <article class="secret-letter" [class.open]="letterOpen">
+      @if (!letterOpen) {
+        <button class="envelope" type="button" (click)="openLetter()" aria-label="Open secret love letter">
+          <span class="wax-seal">♥</span>
+          <span class="envelope-label">For Petha<br><small>Only open with a smile</small></span>
+        </button>
+      } @else {
+        <div class="letter-paper">
+          <span class="letter-flourish">Dear you,</span>
+          <p>In every ordinary moment, you somehow make life feel brighter. You are my calm, my chaos, and my favourite person to find.</p>
+          <p class="letter-signoff">Always yours,<br><strong>Me 💗</strong></p>
+        </div>
+      }
+    </article>
+
+    <div class="memory-section">
+      <p class="memory-kicker">THE MEMORY CONSTELLATION</p>
+      <div class="memory-grid">
+        <div class="memory-card memory-one">
+          <span>01</span>
+          <strong>The first “hello”</strong>
+          <small>That changed everything</small>
+        </div>
+        <div class="memory-card memory-two">
+          <span>02</span>
+          <strong>Our funniest moment</strong>
+          <small>The one we still replay</small>
+        </div>
+        <div class="memory-card memory-three">
+          <span>03</span>
+          <strong>Every future day</strong>
+          <small>Still to be written</small>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
