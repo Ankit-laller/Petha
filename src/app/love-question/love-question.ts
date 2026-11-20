@@ -20,9 +20,9 @@ export class LoveQuestion implements OnDestroy {
 
   // ✨ Question List
   questions: string[] = [
-    'Do you love me?',
-    'Are you sure you don’t love me? 🥺',
-    'Really? Think again, cutie...',
+    'Are you mad ?',
+    'Are you sure you aren\'t mad ? 🥺',
+    'Really? Think again, madiee...',
     'Come on... I know you do 😌',
     'Are you 100% sure?? 😳',
     'The universe is voting for YES ✨'
@@ -37,12 +37,12 @@ export class LoveQuestion implements OnDestroy {
   musicPlaying = false;
 
   private cleanupTimeouts: number[] = [];
+  private readonly musicPlayer = new Audio('assets/what_else.mp3');
 
-  private musicContext?: AudioContext;
-  private musicTimer?: number;
-  private musicNodes: OscillatorNode[] = [];
-
-  constructor(private renderer: Renderer2) {}
+  constructor(private renderer: Renderer2) {
+    this.musicPlayer.loop = true;
+    this.musicPlayer.preload = 'auto';
+  }
 
   ngOnDestroy(): void {
     this.cleanupTimeouts.forEach(t => clearTimeout(t));
@@ -127,48 +127,13 @@ export class LoveQuestion implements OnDestroy {
       return;
     }
 
-    this.musicContext = new AudioContext();
-    await this.musicContext.resume();
     this.musicPlaying = true;
-
-    const notes = [261.63, 329.63, 392.0, 523.25, 392.0, 329.63];
-    let noteIndex = 0;
-
-    const playNote = () => {
-      if (!this.musicContext || !this.musicPlaying) return;
-
-      const oscillator = this.musicContext.createOscillator();
-      const gain = this.musicContext.createGain();
-      oscillator.type = 'sine';
-      oscillator.frequency.value = notes[noteIndex % notes.length];
-      gain.gain.setValueAtTime(0.0001, this.musicContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.035, this.musicContext.currentTime + 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.musicContext.currentTime + 1.8);
-      oscillator.connect(gain);
-      gain.connect(this.musicContext.destination);
-      oscillator.start();
-      oscillator.stop(this.musicContext.currentTime + 1.9);
-      this.musicNodes.push(oscillator);
-      noteIndex++;
-    };
-
-    playNote();
-    this.musicTimer = window.setInterval(playNote, 2300);
+    this.musicPlayer.play().catch(() => this.musicPlaying = false);
   }
 
   private stopMusic(): void {
-    if (this.musicTimer) {
-      window.clearInterval(this.musicTimer);
-      this.musicTimer = undefined;
-    }
-    this.musicNodes.forEach(node => {
-      try { node.stop(); } catch {}
-    });
-    this.musicNodes = [];
-    if (this.musicContext) {
-      void this.musicContext.close();
-      this.musicContext = undefined;
-    }
+    this.musicPlayer.pause();
+    this.musicPlayer.currentTime = 0;
     this.musicPlaying = false;
   }
 
