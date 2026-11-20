@@ -1,7 +1,8 @@
-import { Component, Input, signal, SimpleChanges } from '@angular/core';
+import { Component, Input, signal, SimpleChanges, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { map, Observable, startWith, Subscription, timer } from 'rxjs';
 import { LoveQuestion } from "./love-question/love-question";
+import { NtfyService } from './ntfy.service';
 
 @Component({
   selector: 'app-root',
@@ -11,12 +12,15 @@ import { LoveQuestion } from "./love-question/love-question";
 })
 export class App {
   protected readonly title = signal('Petha');
+  private readonly ntfy = inject(NtfyService);
 
   @Input() name = 'Petha';
   @Input() message = "You're my favourite hello.";
 
   // lazy-load canvas-confetti to avoid import/type issues & keep bundle small
   async playConfetti() {
+    this.ntfy.send('Surprise/confetti button clicked 🎉');
+
     const mod = await import('canvas-confetti');
     const confetti = mod.default ?? mod; // support named/default
     const duration = 800;

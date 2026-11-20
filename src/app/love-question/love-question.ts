@@ -5,6 +5,7 @@ import {
   ViewChild,
   OnDestroy
 } from '@angular/core';
+import { NtfyService } from '../ntfy.service';
 
 @Component({
   selector: 'app-love-question',
@@ -39,7 +40,7 @@ export class LoveQuestion implements OnDestroy {
   private cleanupTimeouts: number[] = [];
   private readonly musicPlayer = new Audio('assets/what_else.mp3');
 
-  constructor(private renderer: Renderer2) {
+  constructor(private renderer: Renderer2, private ntfy: NtfyService) {
     this.musicPlayer.loop = true;
     this.musicPlayer.preload = 'auto';
   }
@@ -56,6 +57,8 @@ export class LoveQuestion implements OnDestroy {
     this.renderer.addClass(el, 'shake');
     const shakeTimeout = window.setTimeout(() => this.renderer.removeClass(el, 'shake'), 600);
     this.cleanupTimeouts.push(shakeTimeout);
+
+    this.ntfy.send(`No button clicked — attempt ${this.noAttempts}`);
 
     if (this.noAttempts >= 3) {
       this.noRunning = true;
@@ -96,13 +99,17 @@ export class LoveQuestion implements OnDestroy {
   }
 
   async onYesClick(): Promise<void> {
-    this.accepted = true;
-    this.emitHeartsFrom(this.yesBtnRef.nativeElement, 28);
+    const btn = this.yesBtnRef?.nativeElement;
 
-    const btn = this.yesBtnRef.nativeElement;
-    this.renderer.addClass(btn, 'pop');
-    const popTimeout = window.setTimeout(() => this.renderer.removeClass(btn, 'pop'), 300);
-    this.cleanupTimeouts.push(popTimeout);
+    if (btn) {
+      this.emitHeartsFrom(btn, 28);
+      this.renderer.addClass(btn, 'pop');
+      const popTimeout = window.setTimeout(() => this.renderer.removeClass(btn, 'pop'), 300);
+      this.cleanupTimeouts.push(popTimeout);
+    }
+
+    this.accepted = true;
+    this.ntfy.send('YES button clicked! 💕');
 
     const mod = await import('canvas-confetti');
     const confetti = mod.default ?? mod;
@@ -118,15 +125,18 @@ export class LoveQuestion implements OnDestroy {
   }
 
   openLetter(): void {
+    this.ntfy.send('Secret love letter opened 💌');
     this.letterOpen = true;
   }
 
   async toggleMusic(): Promise<void> {
     if (this.musicPlaying) {
+      this.ntfy.send('Music paused');
       this.stopMusic();
       return;
     }
 
+    this.ntfy.send('Music play button clicked 🎵');
     this.musicPlaying = true;
     this.musicPlayer.play().catch(() => this.musicPlaying = false);
   }
